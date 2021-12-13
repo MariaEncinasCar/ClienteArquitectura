@@ -5,9 +5,7 @@
  */
 package pantallas;
 
-import dominio.Publicacion;
 import dominio.Usuario;
-import java.util.Date;
 import javax.swing.JFileChooser;
 import javax.swing.JOptionPane;
 import javax.swing.filechooser.FileNameExtensionFilter;
@@ -20,33 +18,20 @@ import textPrompt.TextPrompt;
  */
 public class FrmPublicacion extends javax.swing.JFrame {
     
-    Cliente cli;
-    Usuario usuario;
-    
     private FileNameExtensionFilter filter= new FileNameExtensionFilter("Archivo de imagen", "jpeg");
-//    CtrlPublicacion ctrl = new CtrlPublicacion();
-//    List<Publicacion> listaPublicaciones = ctrl.consultar();
-//    UsuariosDatos userdata;
+    private Cliente cliente;
+    private Usuario usuario;
 
     /**
      * Creates new form frmPublicacion
      */
-    public FrmPublicacion() {
+    public FrmPublicacion(Cliente cliente, Usuario usuario) {
         initComponents();
         setLocationRelativeTo(null);
-//        userdata = new UsuariosDatos();
+        this.usuario = usuario;
+        this.cliente = cliente;
         new TextPrompt("0/200", txtPublicacion);
         new TextPrompt("La ubicación en el equipo de la imagen seleccionada", txtImagen);
-    }
-    
-    private void guardar(){
-        Publicacion p = new Publicacion(); 
-        
-        p.setContenidoTex(txtPublicacion.getText());
-        Date d=new Date();
-//        p.setUsuario(userdata.getUsuarioActual());
-        p.setFechaHora(d);
-//        ctrl.guardar(p);   
     }
 
     /**
@@ -68,6 +53,7 @@ public class FrmPublicacion extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Publicación");
+        setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -153,14 +139,14 @@ public class FrmPublicacion extends javax.swing.JFrame {
     }//GEN-LAST:event_btnImagenActionPerformed
 
     private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
-        guardar();
-        FrmInicio frmInicio = new FrmInicio(cli, usuario);
+        this.publicar();
+        FrmInicio frmInicio = new FrmInicio(cliente, usuario);
         frmInicio.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnAceptarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        FrmInicio frmInicio = new FrmInicio(cli, usuario);
+        FrmInicio frmInicio = new FrmInicio(cliente, usuario);
         frmInicio.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
@@ -176,7 +162,7 @@ public class FrmPublicacion extends javax.swing.JFrame {
     }//GEN-LAST:event_txtPublicacionKeyTyped
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        cli.terminar();
+        // TODO add your handling code here:
     }//GEN-LAST:event_formWindowClosing
 
 
@@ -189,4 +175,14 @@ public class FrmPublicacion extends javax.swing.JFrame {
     private javax.swing.JTextField txtImagen;
     private javax.swing.JTextArea txtPublicacion;
     // End of variables declaration//GEN-END:variables
+
+    private void publicar() {
+        String post=txtPublicacion.getText();
+        if (!post.equalsIgnoreCase("0/200")) {
+            cliente.publicar(post, usuario);
+            FrmInicio frmInicio = new FrmInicio(cliente, usuario);
+//            frmInicio.setVisible(true);
+            this.dispose();
+        }
+    }
 }

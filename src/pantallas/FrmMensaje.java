@@ -18,9 +18,9 @@ import socket.Cliente;
  */
 public class FrmMensaje extends javax.swing.JFrame {
 
-    Cliente cli;
-    Usuario usuario;
-    List<Usuario> listaUsuarios= new ArrayList<>();
+    private List<Usuario> listaUsuarios= new ArrayList<>();
+    private Cliente cliente;
+    private Usuario usuario;
     
     /**
      * Creates new form FrmMensaje
@@ -29,6 +29,10 @@ public class FrmMensaje extends javax.swing.JFrame {
         initComponents();
         llenarUsuarios();
         setLocationRelativeTo(this);
+    }
+
+    FrmMensaje(Cliente cliente, Usuario usuario) {
+        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
     }
     
     private void llenarUsuarios(){
@@ -62,6 +66,7 @@ public class FrmMensaje extends javax.swing.JFrame {
         btnAceptar = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
+        setResizable(false);
         addWindowListener(new java.awt.event.WindowAdapter() {
             public void windowClosing(java.awt.event.WindowEvent evt) {
                 formWindowClosing(evt);
@@ -169,19 +174,19 @@ public class FrmMensaje extends javax.swing.JFrame {
 
     private void btnAceptarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnAceptarActionPerformed
         JOptionPane.showMessageDialog(null, "Mensaje enviado con éxito");
-        FrmInicio frmInicio = new FrmInicio(cli, usuario);
+        FrmInicio frmInicio = new FrmInicio(cliente, usuario);
         frmInicio.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnAceptarActionPerformed
 
     private void btnCancelarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCancelarActionPerformed
-        FrmInicio frmInicio = new FrmInicio(cli, usuario);
+        FrmInicio frmInicio = new FrmInicio(cliente, usuario);
         frmInicio.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnCancelarActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        cli.terminar();
+        cliente.terminar();
     }//GEN-LAST:event_formWindowClosing
 
 

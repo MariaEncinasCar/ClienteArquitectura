@@ -18,22 +18,17 @@ import socket.Cliente;
 
 public class FrmRegistrar extends javax.swing.JFrame {
     
-    Cliente cli;
-
+    Cliente cliente;
+    
     /**
      * Creates new form PantallaRegistrar
      */
-    public FrmRegistrar() {
+    public FrmRegistrar(Cliente cliente) {
         initComponents();
         setLocationRelativeTo(null);
+        this.cliente = cliente;
     }
 
-    FrmRegistrar(Cliente cli) {
-        initComponents();
-        setLocationRelativeTo(null);
-        this.cli = cli;
-    }
-    
     public int calcularEdad() {
         Date fecha = txtDate.getDate();
                 
@@ -78,11 +73,6 @@ public class FrmRegistrar extends javax.swing.JFrame {
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
         setTitle("Registrate");
         setResizable(false);
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
-            }
-        });
 
         jPanel2.setBackground(new java.awt.Color(255, 255, 255));
         jPanel2.addMouseMotionListener(new java.awt.event.MouseMotionAdapter() {
@@ -360,8 +350,10 @@ public class FrmRegistrar extends javax.swing.JFrame {
         String tel = txtTel.getText().trim();
         if (tel.isEmpty()) {
             txtTel.setText("Número telefónico");
+            JOptionPane.showMessageDialog(null, "El número ingresado es inválido.",
+                        "Acceso denegado", JOptionPane.ERROR_MESSAGE);
         }
-        else if (txtTel.getText().length()!=10) {
+        else if (txtTel.getText().length()!= 10) {
             txtTel.setText("Número telefónico");
             JOptionPane.showMessageDialog(null, "El número ingresado es inválido.",
                         "Acceso denegado", JOptionPane.ERROR_MESSAGE);
@@ -402,26 +394,27 @@ public class FrmRegistrar extends javax.swing.JFrame {
                 && !(contraLib.equalsIgnoreCase("Contraseña"))
                 && calcularEdad() >= 18) {
 
-            String r = "";
-            if (telefono.length() != 10 || telefono.equalsIgnoreCase("Número telefónico")) {
-                r = cli.registrar(nombre, email, contraLib, sexo, fecha, calcularEdad());
-            } else {
-                r = cli.registrar(nombre, email, contraLib, telefono, sexo, fecha, calcularEdad());
-            }
+                String r="";
+                if (telefono.length()!=10 || telefono.equalsIgnoreCase("Número telefónico")) {
+                    r = cliente.registrar(nombre, email, contraLib, sexo, fecha, calcularEdad());
+                } else {
+                    r = cliente.registrar(nombre, email, contraLib, telefono, sexo, fecha, calcularEdad());
+                }
+                if (r.isEmpty()) {
+                    JOptionPane.showMessageDialog(null, "Ocurrio un error",
+                            "Acceso denegado", JOptionPane.ERROR_MESSAGE);
+                } else {
+                    JOptionPane.showMessageDialog(rootPane, "Registro exitoso");
+                    new FrmIniciarSesion(cliente).setVisible(true);
+                    this.dispose();
+                }
+            
 
-            if (r.isEmpty()) {
-                JOptionPane.showMessageDialog(null, "Ocurrio un error",
-                        "Acceso denegado", JOptionPane.ERROR_MESSAGE);
-            } else {
-                JOptionPane.showMessageDialog(rootPane, "Registro exitoso");
-                new FrmIniciarSesion(cli).setVisible(true);
-                this.dispose();
-            }
         } else {
             JOptionPane.showMessageDialog(null, "Datos incorrectos",
                     "Acceso denegado", JOptionPane.ERROR_MESSAGE);
         }
-
+ 
     }//GEN-LAST:event_btnRegistrarseActionPerformed
 
     private void jPanel2MouseMoved(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_jPanel2MouseMoved
@@ -439,10 +432,6 @@ public class FrmRegistrar extends javax.swing.JFrame {
             evt.consume();
         }   
     }//GEN-LAST:event_txtTelKeyTyped
-
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        cli.terminar();
-    }//GEN-LAST:event_formWindowClosing
 
 
     // Variables declaration - do not modify//GEN-BEGIN:variables

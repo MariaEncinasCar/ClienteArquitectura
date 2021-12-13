@@ -5,9 +5,11 @@
  */
 package pantallas;
 
+import componentes.PanelPublicaciones;
+import dominio.Publicacion;
 import dominio.Usuario;
-import javax.swing.*;
-import javax.swing.text.BadLocationException;
+import java.awt.BorderLayout;
+import java.util.List;
 import socket.Cliente;
 
 /**
@@ -15,59 +17,36 @@ import socket.Cliente;
  * @author Equipo 6
  */
 public class FrmInicio extends javax.swing.JFrame {
-   
-    Cliente cli;
-    Usuario usuario;
+    
+    private Cliente cliente;
+    private Usuario usuario;
 
-    public FrmInicio(Cliente cli, Usuario u) {
+    /**
+     * Creates new form frmPrincipal
+     */
+    public FrmInicio(Cliente cliente, Usuario usuario) {
         initComponents();
+        this.cliente = cliente;
+        this.usuario = usuario;
         mostrarPublicaciones();
         setLocationRelativeTo(this);
-        this.cli = cli;
-        this.usuario = u;
     }
 
-    //Método para cambiar de línea
-    private void nuevaLinea(JTextPane text) {
+    private void mostrarPublicaciones() {
+        List<Publicacion> lista = cliente.obtenerPublicaciones();
+        int x = 0, y = 0;
+        if (lista != null) {
+            for (int i = (lista.size() - 1); i > 0; i--) {
+                PanelPublicaciones pPub = new PanelPublicaciones(lista.get(i));
 
-        try {
-            text.getStyledDocument().insertString(
-                    text.getStyledDocument().getLength(),
-                    System.getProperty("line.separator"), null);
-        } catch (BadLocationException ex) {
+                pPub.setBounds(x, y, 700, 200);
+                y += 200;
 
+                txtMuro.add(pPub, BorderLayout.CENTER);
+                txtMuro.revalidate();
+                txtMuro.repaint();
+            }
         }
-
-    }
-    
-    private void botonComentar(){
-        txtMuro.setCaretPosition(txtMuro.getStyledDocument().getLength());
-        JButton boton = new JButton("Comentar");
-        txtMuro.insertComponent(boton);
-    }
-    
-    private void mostrarPublicaciones() { 
-        String text_actual;
-
-//        for (int i = 0; i < listaPublicaciones.size(); i++) {
-//            nuevaLinea(txtMuro);
-//            text_actual = txtMuro.getText();
-//            txtMuro.setText(text_actual+listaPublicaciones.get(i).getUsuario().getNombre());
-//            nuevaLinea(txtMuro);
-//            text_actual = txtMuro.getText();
-//            txtMuro.setText(text_actual
-//                    +listaPublicaciones.get(i).getFechaHora().getDate()+"/"
-//                    +listaPublicaciones.get(i).getFechaHora().getMonth()+"/"
-//                    +(listaPublicaciones.get(i).getFechaHora().getYear()+1900)+" "
-//                    +listaPublicaciones.get(i).getFechaHora().getHours()+":"
-//                    +listaPublicaciones.get(i).getFechaHora().getMinutes());
-//            nuevaLinea(txtMuro);
-//            text_actual = txtMuro.getText(); 
-//            txtMuro.setText(text_actual+listaPublicaciones.get(i).getContenidoTex());  
-//            nuevaLinea(txtMuro);nuevaLinea(txtMuro);       
-//            botonComentar();
-//            txtMuro.setMargin(new Insets(0, 50, 0, 0));
-//        }
     }
 
     /**
@@ -81,10 +60,10 @@ public class FrmInicio extends javax.swing.JFrame {
 
         buttonGroup1 = new javax.swing.ButtonGroup();
         jPanel1 = new javax.swing.JPanel();
-        jScrollPane1 = new javax.swing.JScrollPane();
-        txtMuro = new javax.swing.JTextPane();
         btnPublicar = new javax.swing.JButton();
         jButton1 = new javax.swing.JButton();
+        jScrollPane1 = new javax.swing.JScrollPane();
+        txtMuro = new javax.swing.JPanel();
         jMenuBar1 = new javax.swing.JMenuBar();
         memu_Inicio = new javax.swing.JMenu();
         menu_Notificaciones = new javax.swing.JMenu();
@@ -94,19 +73,12 @@ public class FrmInicio extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mi perfil");
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
-            }
-        });
+        setResizable(false);
+        setSize(new java.awt.Dimension(800, 523));
 
         jPanel1.setBackground(new java.awt.Color(255, 255, 255));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(244, 244, 244), 5));
         jPanel1.setForeground(new java.awt.Color(242, 242, 242));
-
-        txtMuro.setEditable(false);
-        txtMuro.setFont(new java.awt.Font("Tahoma", 0, 14)); // NOI18N
-        jScrollPane1.setViewportView(txtMuro);
 
         btnPublicar.setIcon(new javax.swing.ImageIcon(getClass().getResource("/imagenes/publicar_Nom.png"))); // NOI18N
         btnPublicar.setBorder(null);
@@ -130,19 +102,38 @@ public class FrmInicio extends javax.swing.JFrame {
             }
         });
 
+        jScrollPane1.setHorizontalScrollBarPolicy(javax.swing.ScrollPaneConstants.HORIZONTAL_SCROLLBAR_NEVER);
+        jScrollPane1.setPreferredSize(new java.awt.Dimension(730, 25002));
+        jScrollPane1.setRequestFocusEnabled(false);
+
+        txtMuro.setPreferredSize(new java.awt.Dimension(730, 25000));
+
+        javax.swing.GroupLayout txtMuroLayout = new javax.swing.GroupLayout(txtMuro);
+        txtMuro.setLayout(txtMuroLayout);
+        txtMuroLayout.setHorizontalGroup(
+            txtMuroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 730, Short.MAX_VALUE)
+        );
+        txtMuroLayout.setVerticalGroup(
+            txtMuroLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 25000, Short.MAX_VALUE)
+        );
+
+        jScrollPane1.setViewportView(txtMuro);
+
         javax.swing.GroupLayout jPanel1Layout = new javax.swing.GroupLayout(jPanel1);
         jPanel1.setLayout(jPanel1Layout);
         jPanel1Layout.setHorizontalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(jPanel1Layout.createSequentialGroup()
-                .addGap(48, 48, 48)
+                .addGap(35, 35, 35)
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.TRAILING)
+                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 720, javax.swing.GroupLayout.PREFERRED_SIZE)
                     .addGroup(jPanel1Layout.createSequentialGroup()
                         .addComponent(jButton1)
                         .addGap(18, 18, 18)
-                        .addComponent(btnPublicar))
-                    .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 686, javax.swing.GroupLayout.PREFERRED_SIZE))
-                .addContainerGap(56, Short.MAX_VALUE))
+                        .addComponent(btnPublicar)))
+                .addContainerGap(35, Short.MAX_VALUE))
         );
         jPanel1Layout.setVerticalGroup(
             jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
@@ -151,10 +142,12 @@ public class FrmInicio extends javax.swing.JFrame {
                 .addGroup(jPanel1Layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addComponent(btnPublicar)
                     .addComponent(jButton1))
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 18, Short.MAX_VALUE)
-                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 415, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap())
+                .addGap(18, 18, 18)
+                .addComponent(jScrollPane1, javax.swing.GroupLayout.PREFERRED_SIZE, 393, javax.swing.GroupLayout.PREFERRED_SIZE)
+                .addContainerGap(33, Short.MAX_VALUE))
         );
+
+        jScrollPane1.getAccessibleContext().setAccessibleParent(this);
 
         memu_Inicio.setText("Inicio");
         memu_Inicio.addMouseListener(new java.awt.event.MouseAdapter() {
@@ -206,36 +199,36 @@ public class FrmInicio extends javax.swing.JFrame {
     }// </editor-fold>//GEN-END:initComponents
 
     private void menu_PerfilMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menu_PerfilMouseClicked
-        FrmPerfil frmPerfil = new FrmPerfil(cli, usuario);
+        FrmPerfil frmPerfil = new FrmPerfil(cliente, usuario);
         frmPerfil.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_menu_PerfilMouseClicked
 
     private void memu_InicioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_memu_InicioMouseClicked
-        FrmInicio frmInicio = new FrmInicio(cli, usuario);
+        FrmInicio frmInicio = new FrmInicio(cliente, usuario);
         frmInicio.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_memu_InicioMouseClicked
 
     private void btnPublicarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnPublicarActionPerformed
-        FrmPublicacion frmPublicacion = new FrmPublicacion();
+        FrmPublicacion frmPublicacion = new FrmPublicacion(cliente, usuario);
         frmPublicacion.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnPublicarActionPerformed
 
     private void jButton1ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton1ActionPerformed
-        FrmMensaje frmMensaje = new FrmMensaje();
+        FrmMensaje frmMensaje = new FrmMensaje(cliente, usuario);
         frmMensaje.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_jButton1ActionPerformed
 
     private void menu_SalirMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menu_SalirMouseClicked
-        new FrmIniciarSesion(cli).setVisible(true);
+        new FrmIniciarSesion().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_menu_SalirMouseClicked
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        cli.terminar();
+        cliente.terminar();
     }//GEN-LAST:event_formWindowClosing
 
 
@@ -251,6 +244,6 @@ public class FrmInicio extends javax.swing.JFrame {
     private javax.swing.JMenu menu_Notificaciones;
     private javax.swing.JMenu menu_Perfil;
     private javax.swing.JMenu menu_Salir;
-    private javax.swing.JTextPane txtMuro;
+    private javax.swing.JPanel txtMuro;
     // End of variables declaration//GEN-END:variables
 }

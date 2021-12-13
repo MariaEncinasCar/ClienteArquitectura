@@ -6,14 +6,15 @@
 package socket;
 
 import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import dominio.Publicacion;
 import dominio.Usuario;
 import java.io.IOException;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.net.Socket;
 import java.util.Date;
-import java.util.logging.Level;
-import java.util.logging.Logger;
+import java.util.List;
 
 /**
  *
@@ -49,16 +50,15 @@ public class Cliente {
         json = "reg" + json;
         
         String mensajeRespuesta = "";
-        
         try {
             objectOutputStream.writeObject(json);
             objectOutputStream.flush();
-            
+        
             mensajeRespuesta = (String) flujoEntradaDatos.readObject();
         } catch (IOException | ClassNotFoundException ex) {
             System.err.println(ex);
         }
-
+        
         
         return mensajeRespuesta;   
     }
@@ -75,8 +75,8 @@ public class Cliente {
         try {
             objectOutputStream.writeObject(json);
             objectOutputStream.flush();
-        
-        mensajeRespuesta = (String) flujoEntradaDatos.readObject();
+            
+            mensajeRespuesta = (String) flujoEntradaDatos.readObject();
         } catch (IOException | ClassNotFoundException ex) {
             System.err.println(ex);
         }
@@ -131,7 +131,8 @@ public class Cliente {
         }        
     }
     
-    public String actualizarUsuario(String nombre, String email, String contrasena, String sexo, Date fechaNac, int edad ) {
+    public String actualizarUsuario(String nombre, String email, 
+            String contrasena, String sexo, Date fechaNac, int edad ) {
         Usuario usuario = new Usuario(nombre, email, contrasena, sexo, fechaNac, edad);  
         
         json = gson.toJson(usuario);
@@ -141,14 +142,51 @@ public class Cliente {
         try {
             objectOutputStream.writeObject(json);
             objectOutputStream.flush();
-
+        
             mensajeRespuesta = (String) flujoEntradaDatos.readObject();
         } catch (IOException | ClassNotFoundException ex) {
             System.err.println(ex);
         }
         
         return mensajeRespuesta;
+    }
+    
+    public void publicar(String contenido, Usuario usuario) {
+        Publicacion p=new Publicacion();
         
+        p.setContenidoTex(contenido);
+        p.setUsuario(usuario);
+        p.setFechaHora(new Date());
+        
+        json = gson.toJson(p);
+        json = "ppu" + json;
+        
+        try {
+            objectOutputStream.writeObject(json);
+            objectOutputStream.flush();
+        } catch (IOException ex) {
+            System.err.println(ex);
+        }
+        
+    }
+    
+    public List<Publicacion> obtenerPublicaciones() {
+        json = "opu";
+        
+        List<Publicacion> lista = null ;
+        try {
+            objectOutputStream.writeObject(json);
+            objectOutputStream.flush();
+            
+            String respuesta = (String) flujoEntradaDatos.readObject();
+            
+            
+            lista = gson.fromJson(respuesta,  new TypeToken<List<Publicacion>>(){}.getType());
+        } catch (IOException | ClassNotFoundException ex) {
+            System.err.println(ex);
+        }
+        
+        return lista;
     }
     
     public void cerrar() {

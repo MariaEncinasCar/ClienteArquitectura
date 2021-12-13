@@ -12,25 +12,25 @@ import javax.swing.JOptionPane;
 import socket.Cliente;
 
 public class FrmIniciarSesion extends javax.swing.JFrame {
-
-    Cliente cli;
-    Usuario u;
-
+    
+    private Cliente cliente;
+    private Usuario usuario;
+    
     /**
      * Creates new form PantallaInicio
      */
     public FrmIniciarSesion() {
         initComponents();
         setLocationRelativeTo(null);
-        this.cli = new Cliente();
-        this.u = null;
+        this.cliente = new Cliente();
+        this.usuario = null;
     }
 
-    FrmIniciarSesion(Cliente cli) {
+    public FrmIniciarSesion(Cliente cliente) {
         initComponents();
         setLocationRelativeTo(null);
-        this.cli = cli;
-        this.u = null;
+        this.cliente = cliente;
+        this.usuario = null;
     }
     
     public boolean patronEmail(String email) {
@@ -39,15 +39,15 @@ public class FrmIniciarSesion extends javax.swing.JFrame {
                         + "[A-Za-z0-9-]+(\\.[A-Za-z0-9]+)*(\\.[A-Za-z]{2,})$");
 
         Matcher emailM = patronEmail.matcher(email);
-
+        
         return emailM.find();
     }
-
+    
     public boolean patronCel(String cel) {
         Pattern patronCelu = Pattern.compile("\\d{10}");
 
         Matcher celM = patronCelu.matcher(cel);
-
+        
         return celM.find();
     }
 
@@ -220,9 +220,10 @@ public class FrmIniciarSesion extends javax.swing.JFrame {
 
     private void txtIdentidadFocusLost(java.awt.event.FocusEvent evt) {//GEN-FIRST:event_txtIdentidadFocusLost
         String identidad = txtIdentidad.getText().trim();
-        if (identidad.isEmpty() || identidad.equals("Correo Electrónico o Celular")) {
+        if (identidad.isEmpty()) {
             txtIdentidad.setText("Correo Electrónico o Celular");
-        } else {
+        }
+        else {
             if (!(patronEmail(identidad)) && !(patronCel(identidad))) {
                 JOptionPane.showMessageDialog(null, "El usuario es inválido.",
                         "Acceso denegado", JOptionPane.ERROR_MESSAGE);
@@ -239,41 +240,45 @@ public class FrmIniciarSesion extends javax.swing.JFrame {
     }//GEN-LAST:event_pwdContraseniaFocusLost
 
     private void btnCrearCuentaActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnCrearCuentaActionPerformed
-        new FrmRegistrar(cli).setVisible(true);
+        new FrmRegistrar(cliente).setVisible(true);
         this.dispose();
     }//GEN-LAST:event_btnCrearCuentaActionPerformed
 
     private void btn_IniciarSesionActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btn_IniciarSesionActionPerformed
-        String identidad = txtIdentidad.getText().trim().toLowerCase();
-
+       String identidad = txtIdentidad.getText().trim().toLowerCase();
+                       
         char contra[] = pwdContrasenia.getPassword();
         String contraLib = new String(contra);
-
-        if (!(identidad.isEmpty()) && !(contraLib.isEmpty())) {
-            if (patronEmail(identidad)) {
-                u = cli.iniciarSesionEmail(identidad, contraLib);
-            } else if (patronCel(identidad)) {
-                u = cli.iniciarSesionCel(identidad, contraLib);
-            }
-
-            if (u == null) {
-                JOptionPane.showMessageDialog(null, "Acceso denegado:\n Datos incorrectos",
-                        "Acceso denegado", JOptionPane.ERROR_MESSAGE);
-            } else {
-                new FrmInicio(cli, u).setVisible(true);
-                this.dispose();
-                JOptionPane.showMessageDialog(null, "Bienvenido\n",
-                        "Mensaje de bienvenida", JOptionPane.INFORMATION_MESSAGE);
-            }
-
-        } else {
+        
+        if (!(identidad.isEmpty()) && !(contraLib.isEmpty())) {                
+                if (patronEmail(identidad)) {
+                    System.out.println("Hola");
+                    usuario = cliente.iniciarSesionEmail(identidad, contraLib);
+                }
+                else if (patronCel(identidad)) {
+                    usuario = cliente.iniciarSesionCel(identidad, contraLib);
+                }
+                
+                if (usuario == null) {
+                    JOptionPane.showMessageDialog(null, "Acceso denegado:\n Datos incorrectos",
+                    "Acceso denegado", JOptionPane.ERROR_MESSAGE);
+                }
+                else {
+                    new FrmInicio(cliente, usuario).setVisible(true);
+                    this.dispose();
+                    JOptionPane.showMessageDialog(null, "Bienvenido\n",
+                            "Mensaje de bienvenida", JOptionPane.INFORMATION_MESSAGE);
+                }
+            
+        }
+        else {
             JOptionPane.showMessageDialog(null, "Acceso denegado:\n Datos incompletos",
                     "Acceso denegado", JOptionPane.ERROR_MESSAGE);
         }
     }//GEN-LAST:event_btn_IniciarSesionActionPerformed
 
     private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        cli.terminar();
+        cliente.terminar();
     }//GEN-LAST:event_formWindowClosing
 
     /**

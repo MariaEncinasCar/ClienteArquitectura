@@ -11,14 +11,17 @@ import socket.Cliente;
 
 public class FrmPerfil extends javax.swing.JFrame {
     
-    Cliente cli;
+    Cliente cliente;
     Usuario usuario;
     
-    FrmPerfil(Cliente cli, Usuario usuario) {
+    /**
+     * Creates new form frmPerfil
+     */
+    FrmPerfil(Cliente cliente, Usuario usuario) {
         initComponents();
         setLocationRelativeTo(this); 
-        this.cli = cli;
         this.usuario = usuario;
+        this.cliente = cliente;
         this.llenarDatos();
     }
 
@@ -62,11 +65,7 @@ public class FrmPerfil extends javax.swing.JFrame {
 
         setDefaultCloseOperation(javax.swing.WindowConstants.EXIT_ON_CLOSE);
         setTitle("Mi perfil");
-        addWindowListener(new java.awt.event.WindowAdapter() {
-            public void windowClosing(java.awt.event.WindowEvent evt) {
-                formWindowClosing(evt);
-            }
-        });
+        setResizable(false);
 
         jPanel1.setBackground(new java.awt.Color(242, 242, 242));
         jPanel1.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(244, 244, 244), 5));
@@ -338,7 +337,7 @@ public class FrmPerfil extends javax.swing.JFrame {
      * @param evt El click del usuario.
      */
     private void menu_PerfilMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menu_PerfilMouseClicked
-        FrmPerfil frmPerfil = new FrmPerfil(cli, usuario);
+        FrmPerfil frmPerfil = new FrmPerfil(cliente, usuario);
         frmPerfil.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_menu_PerfilMouseClicked
@@ -348,13 +347,14 @@ public class FrmPerfil extends javax.swing.JFrame {
      * @param evt El click del usuario.
      */
     private void menu_InicioMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menu_InicioMouseClicked
-        FrmInicio frmInicio = new FrmInicio(cli, usuario);
+        FrmInicio frmInicio = new FrmInicio(cliente, usuario);
         frmInicio.setVisible(true);
         this.dispose();
     }//GEN-LAST:event_menu_InicioMouseClicked
 
     /**
      * Boton que guarda los nuevos datos del usuario.
+     *
      * @param evt El click del usuario.
      */
     private void btnGuardarActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_btnGuardarActionPerformed
@@ -381,13 +381,9 @@ public class FrmPerfil extends javax.swing.JFrame {
     }//GEN-LAST:event_jPanel1MouseMoved
 
     private void menu_CerrarSesionMouseClicked(java.awt.event.MouseEvent evt) {//GEN-FIRST:event_menu_CerrarSesionMouseClicked
-        new FrmIniciarSesion(cli).setVisible(true);
+        new FrmIniciarSesion().setVisible(true);
         this.dispose();
     }//GEN-LAST:event_menu_CerrarSesionMouseClicked
-
-    private void formWindowClosing(java.awt.event.WindowEvent evt) {//GEN-FIRST:event_formWindowClosing
-        cli.terminar();
-    }//GEN-LAST:event_formWindowClosing
     
    /**
      * Método que actualiza los datos del usuario.
@@ -397,24 +393,22 @@ public class FrmPerfil extends javax.swing.JFrame {
             JOptionPane.showMessageDialog(null, "Los campos tienen que ser llenados.", "Llene los campos.", JOptionPane.WARNING_MESSAGE);
             return;
         }
-
         if (Integer.parseInt(this.txt_Edad.getText()) < 18) {
             JOptionPane.showMessageDialog(null, "La edad del usuario no puede ser menor a 18.", "Error!!", JOptionPane.ERROR_MESSAGE);
             return;
         }
-
         usuario.setNombre(this.txt_Nombre.getText());
         usuario.setFechaNac(this.txt_Fecha.getDate());
         usuario.setEdad(Integer.parseInt(this.txt_Edad.getText()));
-
         if (this.rb_Femenino.isSelected()) {
             usuario.setSexo("Fem");
-        } else {
+        }
+        else {
             usuario.setSexo("Mas");
         }
-
-        cli.actualizarUsuario(usuario.getNombre(), usuario.getEmail(), usuario.getContrasena(), usuario.getSexo(), usuario.getFechaNac(), usuario.getEdad());
+        cliente.actualizarUsuario(usuario.getNombre(), usuario.getEmail(), usuario.getContrasena(), usuario.getSexo(), usuario.getFechaNac(), usuario.getEdad());
         JOptionPane.showMessageDialog(null, "Los datos han sido actualizados.", "Exito!!", JOptionPane.INFORMATION_MESSAGE);
+
     }
     
     /**
